@@ -1,6 +1,6 @@
 mod db;
-mod models;
 mod handlers;
+mod models;
 
 fn main() {
     println!("Hello, world!");
