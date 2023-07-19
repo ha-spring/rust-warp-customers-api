@@ -15,7 +15,7 @@ pub fn customer_routes(
         .or(get_customer(db.clone()))
 }
 
-fn with_db(db: Db) -> impl Filter<Extract = (Db,), Error = Infallible> {
+fn with_db(db: Db) -> impl Filter<Extract = (Db,), Error = Infallible> + Clone {
     warp::any().map(move || db.clone())
 }
 
@@ -23,7 +23,9 @@ fn json_body() -> impl Filter<Extract = (Customer,), Error = warp::Rejection> + 
     warp::body::content_length_limit(1024 * 16).and(warp::body::json())
 }
 
-fn customers_list() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+fn customers_list(
+    db: Db,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::path("customers")
         .and(warp::get())
         .and(with_db(db))
