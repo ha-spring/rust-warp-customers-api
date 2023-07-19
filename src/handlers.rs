@@ -55,3 +55,18 @@ pub async fn update_customer(
 
     return Ok(StatusCode::NOT_FOUND);
 }
+
+pub async fn delete_customer(guid: String, db: Db) -> Result<impl warp::Reply, Infallible> {
+    let mut customers = db.lock().await;
+
+    let customer_count = customers.len();
+
+    customers.retain(|customer| customer.guid != guid);
+
+    let deleted = customers.len() != customer_count;
+    if deleted {
+        Ok(StatusCode::NO_CONTENT)
+    } else {
+        Ok(StatusCode::NOT_FOUND)
+    }
+}
